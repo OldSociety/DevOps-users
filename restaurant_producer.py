@@ -2,16 +2,13 @@ import mysql.connector
 from faker import Faker
 
 fake = Faker()
-fake.name()
 
-# first and last name generator
-fake_name_1 = fake.name()
-full_name = fake_name_1.split()
-
-# fake email, phone, password generator
-fake_email = fake.email()
+# fake generators
+fake_name = fake.company()
+fake_address = fake.address()
 fake_phone = fake.msisdn()
-fake_pwd = fake.password()
+fake_url = fake.url()
+fake_time = fake.time()
 
 # connect to mysql database
 connection = mysql.connector.connect(host='localhost', database='leftovers', user='leftover', password='9.Leftovers')
@@ -25,13 +22,13 @@ my_cursor=connection.cursor()
 
 def test_append():
     # print(connection)
-    # query = "SELECT * FROM customer"
+    query1 = "DROP FOREIGN KEY address_id; "
     query = "INSERT INTO tbl_restaurant(name, address_id, phone_no, website, open_time, close_time, rating, rating_count) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
     
     # query to insert all the v information about an account in tuple form
-    account = (str(full_name[0]), str(full_name[1]),str(fake_phone), str(fake_email), str(fake_pwd), "C")
+    account = (str(fake_name), "1",str(fake_phone), str(fake_url), str(fake_time), str(fake_time), "4.0", "7")
     
-    my_cursor.execute(query, account)
+    my_cursor.execute(query1, query, account)
     connection.commit()
 
     for data in my_cursor: #getting all the names using the loop
