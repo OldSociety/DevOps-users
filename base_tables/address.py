@@ -2,16 +2,18 @@ import mysql.connector
 from faker import Faker
 
 fake = Faker()
-fake.name()
 
-# first and last name generator
-fake_name_1 = fake.name()
-full_name = fake_name_1.split()
-
-# fake email, phone, password generator
+# fake generators
 fake_email = fake.email()
-fake_phone = fake.msisdn()
-fake_pwd = fake.password()
+
+# intentionally using country codes for testing
+fake_state = fake.country_code()
+
+fake_country = fake.current_country()
+fake_zip = fake.postcode()
+fake_houseNum = fake.building_number()
+fake_address = fake.street_name()
+fake_suffix = fake.street_suffix()
 
 # connect to mysql database
 connection = mysql.connector.connect(host='localhost', database='leftovers', user='leftover', password='9.Leftovers')
@@ -26,12 +28,12 @@ my_cursor=connection.cursor()
 def test_append():
     # print(connection)
     # query = "SELECT * FROM customer"
-    query = "INSERT INTO tbl_account(first_name, last_name, email, phone_no, hashed_password, type) VALUES(%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO tbl_address(latitude, longitude, zip_code, country, state, street_address, house_number, unit_number) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
     
     # query to insert all the v information about an account in tuple form
-    account = (str(full_name[0]), str(full_name[1]), str(fake_email),str(fake_phone), str(fake_pwd), "C")
+    address = ("97.00", "97.00", str(fake_zip), str(fake_country), str(fake_state), str(fake_address) + " " + str(fake_suffix), str(fake_houseNum), "C")
     
-    my_cursor.execute(query, account)
+    my_cursor.execute(query, address)
     connection.commit()
 
     for data in my_cursor: #getting all the names using the loop
@@ -43,7 +45,7 @@ def test_append():
 
 def test_read():
     # read data of all the columns from the table
-    query = "SELECT * FROM tbl_account"
+    query = "SELECT * FROM tbl_address"
     my_cursor.execute(query)
     res = my_cursor.fetchall() #storing the output of fetchall() in the res
     for row in res: #printing all the records in res
@@ -51,7 +53,7 @@ def test_read():
         
 
 def test_delete_table():
-    query = "SET FOREIGN_KEY_CHECKS=0; DROP TABLE tbl_account"
+    query = "DROP TABLE tbl_address"
     my_cursor.execute(query)
     print("table successfully deleted")
     
